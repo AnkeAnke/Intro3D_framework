@@ -152,9 +152,14 @@ namespace Sample
 
             Vector2 posUV = localCoord - (Vector2)ulPos;
 
-            //Vector3 lPoint = new Vector3((Vector2)llPos + Vector2.UnitX*((1 - posUV.X) * GetHeight(llPos) + posUV.X * GetHeight(lrPos));
+            float upHeight  = (1 - posUV.X) * GetHeight(ulPos) + posUV.X * GetHeight(urPos);
+            float lowHeight = (1 - posUV.X) * GetHeight(llPos) + posUV.X * GetHeight(lrPos);
 
-            return new Vector3(1, 0, 0);
+            float leftHeight =  (1 - posUV.Y) * GetHeight(llPos) + posUV.Y * GetHeight(ulPos);
+            float rightHeight = (1 - posUV.Y) * GetHeight(lrPos) + posUV.Y * GetHeight(urPos);
+
+            Vector2 grad = new Vector2((upHeight - lowHeight) / FieldSize.X, (rightHeight - leftHeight) / FieldSize.Y) * (Vector2)NumFields; 
+            return new Vector3(grad.X, grad.Length, grad.Y);
         }
 
         public float GetHeight(Vector2 pos)
