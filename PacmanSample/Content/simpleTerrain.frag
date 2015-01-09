@@ -24,7 +24,7 @@ void main()
   vec3 halfVec = normalize(lightDir - CameraViewDir);
 
   float specular = pow(abs(dot(normNormal, halfVec)), 4.0); // intentionally wrong abs, just because it looks "cooler"
-  float diffuse = dot(normNormal, lightDir) + 0.4;
+  float diffuse = dot(normNormal, lightDir);
 
   OutputColor.rgb = diffuse * vec3(0.6, 0.6, 0.7) + specular * vec3(0.8, 0.8, 1.0);
   OutputColor.a = 1.0;

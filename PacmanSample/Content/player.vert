@@ -3,6 +3,9 @@
 layout(std140) uniform PerFrame
 {
   mat4 ViewProjection;
+  vec3 CameraPosition;
+  vec3 CameraViewDir;
+  float Time;
 };
 layout(std140) uniform Player
 {
