@@ -11,10 +11,12 @@ layout(std140) uniform PerObject
 layout(location = 0) in vec2 inPosition;
 layout(location = 1) in vec2 inTexcoord;
 layout(location = 2) in float inHeight;
+layout(location = 3) in vec3 inNormal;
 
 // Output = input for fragment shader.
 out vec2 Texcoord;
 out float Height;
+out vec3 Normal;
 
 void main(void)
 {
@@ -23,4 +25,5 @@ void main(void)
   // Simply pass through
   Texcoord = inTexcoord;
   Height = inHeight;
+  Normal = inNormal;
 }  

@@ -27,6 +27,8 @@ namespace Sample
             public OpenTK.Vector2 texcoord;
             [FieldOffset(sizeof(float) * 4)]
             public float height;
+            [FieldOffset(sizeof(float) * 5)]
+            public Vector3 normal;
         }
 
         private Vector2 FieldSize;
@@ -84,6 +86,51 @@ namespace Sample
                     };
                 }
 
+            // Compute normals.
+            for (int x = 0; x <= numFieldsX; ++x)
+                for (int y = 0; y <= numFieldsY; ++y)
+                {
+                    VertexTerrain up, low, right, left;
+                    if (x == 0)
+                    {
+                        right = vertices[1 + y * (numFieldsX + 1)];
+                        left  = vertices[y * (numFieldsX + 1)];
+                    }
+                    else if(x==numFieldsX)
+                    {
+                        right = vertices[numFieldsX + y * (numFieldsX + 1)];
+                        left  = vertices[numFieldsX - 1 + y * (numFieldsX + 1)];
+                    }
+                    else
+                    {
+                        right = vertices[x + 1 + y * (numFieldsX + 1)];
+                        left = vertices[x - 1 + y * (numFieldsX + 1)];
+                    }
+
+                    if (y == 0)
+                    {
+                        up = vertices[x + (numFieldsX + 1)];
+                        low = vertices[x];
+                    }
+                    else if (y==numFieldsY)
+                    {
+                        up = vertices[x + numFieldsY * (numFieldsX + 1)];
+                        low = vertices[x + (numFieldsY-1) * (numFieldsX + 1)];
+                    }
+                    else
+                    {
+                        up  = vertices[x + (y + 1) * (numFieldsX + 1)];
+                        low = vertices[x + (y - 1) * (numFieldsX + 1)];
+                    }
+
+                    Vector3 xGrad = new Vector3(1, right.height-left.height, 0)/fieldSizeX * numFieldsX;
+                    Vector3 yGrad = new Vector3(0, up.height - low.height, 1) / fieldSizeY * numFieldsY;
+
+                    Vector3 normal = Vector3.Cross(xGrad, yGrad);
+                    normal.Normalize();
+
+                    vertices[y * (numFieldsX + 1) + x].normal = normal;
+                }
             // Link the vertices to triangles via index buffer.
             // Creating sizeX * sizeY quads with 2 triangles at 3 vertices each.
 
@@ -129,6 +176,8 @@ namespace Sample
             GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, vertexSize, sizeof(float) * 4);
             GL.EnableVertexAttribArray(2);
+            GL.VertexAttribPointer(3, 1, VertexAttribPointerType.Float, false, vertexSize, sizeof(float) * 5);
+            GL.EnableVertexAttribArray(3);
 
             // Setting the texture.
             if (Texture != null)
@@ -161,6 +210,12 @@ namespace Sample
             Vector2 grad = new Vector2((upHeight - lowHeight) / FieldSize.X, (rightHeight - leftHeight) / FieldSize.Y) * (Vector2)NumFields; 
             return new Vector3(grad.X, grad.Length, grad.Y);
         }
+
+        public Vector3 GetNormal(Vector2 pos)
+        {
+            return Vector3.Zero;
+        }
+
 
         public float GetHeight(Vector2 pos)
         {
