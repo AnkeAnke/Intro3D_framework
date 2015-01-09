@@ -3,6 +3,7 @@
 layout(std140) uniform PerFrame
 {
   mat4 ViewProjection;
+  vec3 CameraViewDir;
 };
 layout(std140) uniform PerBlock
 {

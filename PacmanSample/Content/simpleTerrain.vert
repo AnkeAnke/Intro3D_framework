@@ -1,11 +1,13 @@
 #version 330
 
-layout(std140) uniform PerObject
+layout(std140) uniform PerFrame
 {
   mat4 WorldViewProjection;
   vec3 CameraPosition;
+  vec3 CameraViewDir;
   float Time;
 };
+
 
 // Vertex input.
 layout(location = 0) in vec2 inPosition;
