@@ -80,7 +80,7 @@ namespace Sample
                         position = new OpenTK.Vector2(xPos, yPos),
                         texcoord = new OpenTK.Vector2((float)x/numFieldsX, (float)y/numFieldsY),
                         // Boring function to add some height.
-                        height = (float)(Math.Sin(xPos/10) - Math.Cos(yPos/10))*10
+                        height = (float)(Math.Sin(xPos/10) - Math.Cos(yPos/10))*30
                     };
                 }
 
@@ -160,17 +160,17 @@ namespace Sample
         public float GetHeight(Vector2 pos)
         {
             Vector2 localCoord = pos + FieldSize / 2;
-            localCoord = new Vector2(localCoord.X / FieldSize.X, localCoord.Y / FieldSize.Y);
+            localCoord = new Vector2(localCoord.X / FieldSize.X * NumFields.X, localCoord.Y / FieldSize.Y * NumFields.Y);
             // Lower left, lower right, upper left, upper right positions.
             VectorInt llPos = new VectorInt((int)localCoord.X, (int)localCoord.Y);
             VectorInt lrPos = llPos + VectorInt.UnitX;
             VectorInt ulPos = llPos + VectorInt.UnitY;
             VectorInt urPos = lrPos + VectorInt.UnitY;
 
-            Vector2 posUV = localCoord - (Vector2)ulPos;
+            Vector2 posUV = localCoord - (Vector2)llPos;
 
             float posValue = (1 - posUV.Y) * ((1 - posUV.X) * GetHeight(llPos) + posUV.X * GetHeight(lrPos)) +
-                             posUV.Y * ((1 - posUV.X) * GetHeight(ulPos) + posUV.X * GetHeight(urPos));
+                             posUV.Y *       ((1 - posUV.X) * GetHeight(ulPos) + posUV.X * GetHeight(urPos));
 
             return posValue;
         }
