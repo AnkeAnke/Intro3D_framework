@@ -153,7 +153,7 @@ namespace Sample
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             player.Render();
-            map.Render(totalTime);
+            map.Render(totalTime, terrain);
             // Draw a terrain!
             GL.UseProgram(terrainShader.Program);              // Activate shader.
             terrain.Draw();  

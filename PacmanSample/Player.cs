@@ -59,17 +59,14 @@ namespace Sample
         {
             // Project gradient back to 2D field, but keep original speed.
             Vector3 terrainGradient = terrain.GetGradient(position);
-            float speed = terrainGradient.Length;
-
-            Vector3 worldX = -worldOrientation.Column0.Xyz;
-            Vector3 worldY = worldOrientation.Column2.Xyz;
-            Vector2 projectedGradient = new Vector2(Vector3.Dot(worldX, terrainGradient), Vector3.Dot(worldY, terrainGradient));
+            float acceleration = -Vector3.Transform(terrainGradient, worldOrientation).Y;
+            Vector2 projectedGradient = new Vector2(terrainGradient.X, terrainGradient.Z);
             if (projectedGradient.LengthSquared > 0.00001)
                 projectedGradient = Vector2.UnitX * 0.0001f;
             projectedGradient.Normalize();
 
             // Move in terrain gradient direction.
-            Vector2 nextVelocity = velocity + projectedGradient * timeSinceLastFrame * accelerationFactor;
+            Vector2 nextVelocity = velocity + projectedGradient * (timeSinceLastFrame * accelerationFactor * acceleration);
             Vector2 nextPosition = position + nextVelocity;
 
             // Check if we would now touch a non walkable field
@@ -87,8 +84,8 @@ namespace Sample
             viewDir += velocity * 0.001f;
             viewDir.Normalize();
 
-            uniformData.world = Matrix4.CreateRotationY((float)Math.Acos(Vector2.Dot(viewDir, Vector2.UnitX))) * 
-                                Matrix4.CreateTranslation(position.X, 0, position.Y);
+            uniformData.world = Matrix4.CreateRotationY((float)Math.Acos(Vector2.Dot(viewDir, Vector2.UnitX))) *
+                                Matrix4.CreateTranslation(position.X, terrain.GetHeight(new Vector2(position.X, position.Y)), position.Y);
             uniformGPUBuffer.UpdateGPUData(ref uniformData);
         }
 

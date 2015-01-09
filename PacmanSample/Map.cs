@@ -138,15 +138,15 @@ namespace Sample
 
             perBlockUniformGPUBuffer = new UniformBuffer<PerBlockUniformData>();
         }
-        public void Render(float totalTime)
+        public void Render(float totalTime, Terrain terrain)
         {
             GL.UseProgram(blockShader.Program);
 
             perBlockUniformData.scale = map.GetLength(0);
             perBlockUniformData.position = (-1) * groundHeight * (perBlockUniformData.scale - 1) * Vector3.UnitY; 
-            perBlockUniformGPUBuffer.UpdateGPUData(ref perBlockUniformData);
+            //perBlockUniformGPUBuffer.UpdateGPUData(ref perBlockUniformData);
             perBlockUniformGPUBuffer.BindBuffer(1);
-            ground.Draw();
+            //ground.Draw();
 
             // Draw the blocks.
             perBlockUniformData.scale = 1;
@@ -157,7 +157,9 @@ namespace Sample
                     if (map[x, y] == BlockType.NONE)
                         continue;
 
-                    perBlockUniformData.position = new Vector3((x - map.GetLength(0) / 2 + 0.5f) * blockSize, 0, (y - map.GetLength(1) / 2 + 0.5f) * blockSize);
+                    Vector2 pos2d = new Vector2((x - map.GetLength(0) / 2 + 0.5f) * blockSize, (y - map.GetLength(1) / 2 + 0.5f) * blockSize);
+                    perBlockUniformData.position = new Vector3(pos2d.X, terrain.GetHeight(new Vector2(pos2d.X, pos2d.Y)), pos2d.Y);
+
                     perBlockUniformGPUBuffer.UpdateGPUData(ref perBlockUniformData);
                     blockModels[(int)map[x, y]].Draw();
                 }
