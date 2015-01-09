@@ -24,6 +24,8 @@ namespace Sample
         {
             public Matrix4 viewProjection;
             public Vector3 cameraPosition;
+            public float padding;
+            public Vector3 cameraViewDir;
             public float totalTime;
         }
         private PerFrameUniformData perFrameUniformData;
@@ -93,7 +95,7 @@ namespace Sample
 
             map = new Map();
             player = new Player(Vector2.Zero);
-            terrain = new Terrain(30, 30, map.Size.X, map.Size.Y);
+            terrain = new Terrain(32,32, map.Size.X, map.Size.Y);
             terrainShader = Shader.GetResource(new Shader.LoadDescription("Content/simpleTerrain.vert", "Content/simpleTerrain.frag"));
             terrain.Texture = Texture2D.GetResource("Content/Models/Texture/Ground0.png");
 
@@ -135,6 +137,8 @@ namespace Sample
             
             // Update per frame uniform data.
             perFrameUniformData.cameraPosition = new Vector3(0.0f, 100.0f, -100.0f);
+            perFrameUniformData.cameraViewDir = Vector3.TransformVector(Vector3.Normalize(Vector3.Zero - perFrameUniformData.cameraPosition),
+                                                                worldRotationMatrix.Inverted()); 
             Matrix4 view = Matrix4.LookAt(perFrameUniformData.cameraPosition, Vector3.Zero, Vector3.UnitY);
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI * 0.35f, (float)Width / Height, 0.1f, 500.0f);
             perFrameUniformData.viewProjection = worldRotationMatrix * view * projection; // Use world rotation to manipulate the global view projection matrix.
