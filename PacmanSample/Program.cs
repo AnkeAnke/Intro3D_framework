@@ -93,7 +93,7 @@ namespace Sample
 
             map = new Map();
             player = new Player(Vector2.Zero);
-            terrain = new Terrain(10,10, map.Size.X, map.Size.Y);
+            terrain = new Terrain(30, 30, map.Size.X, map.Size.Y);
             terrainShader = Shader.GetResource(new Shader.LoadDescription("Content/simpleTerrain.vert", "Content/simpleTerrain.frag"));
             terrain.Texture = Texture2D.GetResource("Content/Models/Texture/Ground0.png");
 

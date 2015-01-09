@@ -51,7 +51,7 @@ namespace Sample
 
             uniformGPUBuffer = new UniformBuffer<PlayerUniformData>();
 
-            model = Model.GetResource("Content/Models/bamboo.obj");
+            model = Model.GetResource("Content/Models/pacice.obj");
             model.Meshes[0].texture = Texture2D.GetResource("Content/Models/Texture/Bamboo.png");
         }
 
