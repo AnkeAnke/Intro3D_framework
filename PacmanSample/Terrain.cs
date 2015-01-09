@@ -43,6 +43,21 @@ namespace Sample
             return vertices[pos.X + pos.Y*(NumFields.X+1)].height;
         }
 
+        private float GetHeight(int X, int Y)
+        {
+            return GetHeight(new VectorInt(X,Y));
+        }
+
+        private void SetHeight(VectorInt pos, float height)
+        {
+            vertices[pos.X + pos.Y * (NumFields.X + 1)].height = height;
+        }
+
+        private void SetHeight(int X, int Y, float height)
+        {
+            SetHeight(new VectorInt(X,Y), height);
+        }
+
         /// <summary>
         /// Index of Index Buffer.
         /// </summary>
@@ -78,11 +93,11 @@ namespace Sample
                     // Assign position and texcoord basedon index. 
                     vertices[y*(numFieldsX+1) + x] = new VertexTerrain{
                         position = new OpenTK.Vector2(xPos, yPos),
-                        texcoord = new OpenTK.Vector2((float)x/numFieldsX, (float)y/numFieldsY),
-                        // Boring function to add some height.
-                        height = (float)(Math.Sin(xPos/10) - Math.Cos(yPos/10))*30
+                        texcoord = new OpenTK.Vector2((float)x/numFieldsX, (float)y/numFieldsY)
                     };
                 }
+
+            GenerateTerrainPos(new VectorInt(0, 0), new VectorInt(numFieldsX, numFieldsY), 50.0f);
 
             // Link the vertices to triangles via index buffer.
             // Creating sizeX * sizeY quads with 2 triangles at 3 vertices each.
@@ -178,6 +193,57 @@ namespace Sample
                              posUV.Y *       ((1 - posUV.X) * GetHeight(ulPos) + posUV.X * GetHeight(urPos));
 
             return posValue;
+        }
+
+        // should not be static etc. bla..
+        static Random random = new Random();
+
+        private bool IsBorder(int x, int y)
+        {
+            return x == 0 || y == 0 || x == NumFields.X || y == NumFields.Y;
+        }
+
+        private void GenerateTerrainPos(VectorInt min, VectorInt max, float Interval)
+        {
+            float EdgeHeight, centerHeight;
+            VectorInt mid = (min + max) / 2;
+
+            if ((max.X - min.X < 2) && (max.Y - min.Y < 2))
+	            return;
+
+            centerHeight = (GetHeight(min) + GetHeight(new VectorInt(max.X, min.Y)) + 
+                            GetHeight(new VectorInt(min.X, max.Y)) + GetHeight(max)) / 4.0f +
+                            (float)random.NextDouble() * Interval;
+	        centerHeight = Math.Abs(centerHeight);
+            SetHeight(mid, centerHeight);
+
+	        if(!IsBorder(min.X, mid.Y))
+	        {
+                EdgeHeight = (GetHeight(min) + GetHeight(min.X, max.Y)) / 2.0f + (float)random.NextDouble() * Interval;
+		        SetHeight(min.X, mid.Y, Math.Abs(EdgeHeight));
+	        }
+            if (!IsBorder(max.Y, mid.Y))
+	        {
+                EdgeHeight = (GetHeight(max.X, min.Y) + GetHeight(max)) / 2.0f + (float)random.NextDouble() * Interval;
+                SetHeight(max.X, mid.Y, Math.Abs(EdgeHeight));
+	        }
+	        if(!IsBorder(mid.X, min.Y))
+	        {
+                EdgeHeight = (GetHeight(min) + GetHeight(max.X, min.Y)) / 2.0f + (float)random.NextDouble() * Interval;
+                SetHeight(mid.X, min.Y, Math.Abs(EdgeHeight));
+	        }
+	        if(!IsBorder(mid.X, max.Y))
+	        {
+                EdgeHeight = (GetHeight(min.X, max.Y) + GetHeight(max)) / 2.0f + (float)random.NextDouble() * Interval;
+                SetHeight(mid.X, max.Y, Math.Abs(EdgeHeight));
+	        }
+    
+	        Interval /= 2;
+
+            GenerateTerrainPos(min, mid, Interval);
+            GenerateTerrainPos(new VectorInt(mid.X, min.Y), new VectorInt(max.X, mid.Y), Interval);
+            GenerateTerrainPos(new VectorInt(min.X, mid.Y), new VectorInt(mid.X, max.Y), Interval);
+            GenerateTerrainPos(mid, max, Interval);
         }
     }
 }
