@@ -54,15 +54,28 @@ namespace Sample
             model.Meshes[0].texture = Texture2D.GetResource("Content/Models/Texture/Bamboo.png");
         }
 
-        public void Update(float timeSinceLastFrame, Map map)
+        public void Update(float timeSinceLastFrame, Map map, Terrain terrain, Matrix4 worldOrientation)
         {
+            // Project gradient back to 2D field, but keep original speed.
+            Vector3 terrainGradient = terrain.GetGradient(position);
+            float speed = terrainGradient.Length;
+
+            Vector3 worldX = -worldOrientation.Column0.Xyz;
+            Vector3 worldY = worldOrientation.Column2.Xyz;
+            Vector2 projectedGradient = new Vector2(Vector3.Dot(worldX, terrainGradient), Vector3.Dot(worldY, terrainGradient));
+            if (projectedGradient.LengthSquared < 0.00001) return;
+            projectedGradient.Normalize();
+
+            // Move in terrain gradient direction.
+            Vector2 nextPosition = position + projectedGradient * timeSinceLastFrame * moveSpeed;
+
             // Check if we would now touch a non walkable field
-            /*int gatheredCoins;
+            int gatheredCoins;
             if (map.TryWalk(nextPosition - playerSize / 2 * Vector2.One, nextPosition + playerSize / 2 * Vector2.One, out gatheredCoins))
             {
                 position = nextPosition;
                 score += gatheredCoins;
-            }*/
+            }
 
             uniformData.world = Matrix4.CreateRotationY((float)Math.Acos(Vector2.Dot(viewDir, Vector2.UnitX))) * 
                                 Matrix4.CreateTranslation(position.X, 0, position.Y);

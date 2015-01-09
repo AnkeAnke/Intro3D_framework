@@ -126,12 +126,13 @@ namespace Sample
             // Update the time.
             totalTime += (float)e.Time;
 
-            player.Update((float)e.Time, map);
-
             // Update rotation.
-            control.OnUpdateFrame(e);
+            control.OnUpdateFrame((float)e.Time);
             Matrix4 worldRotationMatrix = Matrix4.CreateFromQuaternion(control.WorldRotation);
 
+            player.Update((float)e.Time, map, terrain, worldRotationMatrix);
+
+            
             // Update per frame uniform data.
             perFrameUniformData.cameraPosition = new Vector3(0.0f, 100.0f, -100.0f);
             Matrix4 view = Matrix4.LookAt(perFrameUniformData.cameraPosition, Vector3.Zero, Vector3.UnitY);
