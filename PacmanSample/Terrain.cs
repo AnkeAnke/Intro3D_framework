@@ -191,7 +191,7 @@ namespace Sample
             GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(2, 1, VertexAttribPointerType.Float, false, vertexSize, sizeof(float) * 4);
             GL.EnableVertexAttribArray(2);
-            GL.VertexAttribPointer(3, 1, VertexAttribPointerType.Float, false, vertexSize, sizeof(float) * 5);
+            GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, vertexSize, sizeof(float) * 5);
             GL.EnableVertexAttribArray(3);
 
             // Setting the texture.
