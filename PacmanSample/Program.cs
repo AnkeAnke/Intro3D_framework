@@ -35,6 +35,8 @@ namespace Sample
 
         private Map map;
         private Player player;
+        private Terrain terrain;
+        private Shader terrainShader;
 
         public PacmanSample()
             : base(800, 600)
@@ -90,6 +92,9 @@ namespace Sample
 
             map = new Map();
             player = new Player(Vector2.Zero);
+            terrain = new Terrain(80, 80, 40, 40);
+            terrainShader = Shader.GetResource(new Shader.LoadDescription("Content/simpleTerrain.vert", "Content/simpleTerrain.frag"));
+            terrain.Texture = Texture2D.GetResource("Content/Models/Texture/Ground0.png");
 
             // OpenTK sets the update frequency by default to 30hz while rendering as fast as possible - which is 60hz at max for most screens (with activated V-Sync).
             // Since this can be rather confusing and lead to not-so-smooth animations, we set the target update frequency to 60hz
@@ -143,6 +148,9 @@ namespace Sample
 
             player.Render();
             map.Render(totalTime);
+            // Draw a terrain!
+            GL.UseProgram(terrainShader.Program);              // Activate shader.
+            terrain.Draw();  
             
             // Swap back and front buffer (=display sth.!).
             SwapBuffers();

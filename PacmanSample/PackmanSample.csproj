@@ -37,6 +37,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Terrain.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
@@ -50,6 +51,8 @@
     <None Include="Content\player.vert" />
     <None Include="Content\default.frag" />
     <None Include="Content\block.vert" />
+    <None Include="Content\simpleTerrain.frag" />
+    <None Include="Content\simpleTerrain.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
