@@ -258,6 +258,11 @@ namespace Sample
             return x == 0 || y == 0 || x == NumFields.X || y == NumFields.Y;
         }
 
+        private float Random()
+        {
+            return (float)random.NextDouble() * 2.0f - 1.0f;
+        }
+
         private void GenerateTerrainPos(VectorInt min, VectorInt max, float Interval)
         {
             float EdgeHeight, centerHeight;
@@ -268,32 +273,31 @@ namespace Sample
 
             centerHeight = (GetHeight(min) + GetHeight(new VectorInt(max.X, min.Y)) + 
                             GetHeight(new VectorInt(min.X, max.Y)) + GetHeight(max)) / 4.0f +
-                            (float)random.NextDouble() * Interval;
-	        centerHeight = Math.Abs(centerHeight);
+                            Random() * Interval;
             SetHeight(mid, centerHeight);
 
-	        if(!IsBorder(min.X, mid.Y))
+	        //if(!IsBorder(min.X, mid.Y))
 	        {
-                EdgeHeight = (GetHeight(min) + GetHeight(min.X, max.Y)) / 2.0f + (float)random.NextDouble() * Interval;
-		        SetHeight(min.X, mid.Y, Math.Abs(EdgeHeight));
+                EdgeHeight = (GetHeight(min) + GetHeight(min.X, max.Y)) / 2.0f + Random() * Interval;
+		        SetHeight(min.X, mid.Y, EdgeHeight);
 	        }
-            if (!IsBorder(max.Y, mid.Y))
+            //if (!IsBorder(max.Y, mid.Y))
 	        {
-                EdgeHeight = (GetHeight(max.X, min.Y) + GetHeight(max)) / 2.0f + (float)random.NextDouble() * Interval;
-                SetHeight(max.X, mid.Y, Math.Abs(EdgeHeight));
+                EdgeHeight = (GetHeight(max.X, min.Y) + GetHeight(max)) / 2.0f + Random() * Interval;
+                SetHeight(max.X, mid.Y, EdgeHeight);
 	        }
-	        if(!IsBorder(mid.X, min.Y))
+	        //if(!IsBorder(mid.X, min.Y))
 	        {
-                EdgeHeight = (GetHeight(min) + GetHeight(max.X, min.Y)) / 2.0f + (float)random.NextDouble() * Interval;
-                SetHeight(mid.X, min.Y, Math.Abs(EdgeHeight));
+                EdgeHeight = (GetHeight(min) + GetHeight(max.X, min.Y)) / 2.0f + Random() * Interval;
+                SetHeight(mid.X, min.Y, EdgeHeight);
 	        }
-	        if(!IsBorder(mid.X, max.Y))
+	        //if(!IsBorder(mid.X, max.Y))
 	        {
-                EdgeHeight = (GetHeight(min.X, max.Y) + GetHeight(max)) / 2.0f + (float)random.NextDouble() * Interval;
-                SetHeight(mid.X, max.Y, Math.Abs(EdgeHeight));
+                EdgeHeight = (GetHeight(min.X, max.Y) + GetHeight(max)) / 2.0f + Random() * Interval;
+                SetHeight(mid.X, max.Y, EdgeHeight);
 	        }
-    
-	        Interval /= 2;
+
+            Interval = (float)Math.Pow(Interval, 0.7); 
 
             GenerateTerrainPos(min, mid, Interval);
             GenerateTerrainPos(new VectorInt(mid.X, min.Y), new VectorInt(max.X, mid.Y), Interval);
