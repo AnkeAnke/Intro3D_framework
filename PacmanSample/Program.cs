@@ -83,8 +83,8 @@ namespace Sample
             // Set standard OpenGL clear color.
             GL.ClearColor(Color.MidnightBlue);
             // Enable backface culling
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+            //GL.Enable(EnableCap.CullFace);
+            //GL.CullFace(CullFaceMode.Back);
 
             perFrameUniformGPUBuffer = new UniformBuffer<PerFrameUniformData>();
             perFrameUniformGPUBuffer.BindBuffer(0); // Per convention always at binding point 0.
@@ -93,7 +93,7 @@ namespace Sample
 
             map = new Map();
             player = new Player(Vector2.Zero);
-            terrain = new Terrain(80, 80, 40, 40);
+            terrain = new Terrain(3,3, map.Size.X, map.Size.Y);
             terrainShader = Shader.GetResource(new Shader.LoadDescription("Content/simpleTerrain.vert", "Content/simpleTerrain.frag"));
             terrain.Texture = Texture2D.GetResource("Content/Models/Texture/Ground0.png");
 

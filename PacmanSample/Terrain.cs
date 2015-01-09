@@ -29,10 +29,19 @@ namespace Sample
             public float height;
         }
 
+        private Vector2 FieldSize;
+        private VectorInt NumFields;
+
         /// <summary>
         /// Index of Vertex Buffer.
         /// </summary>
         private int vertexBuffer;
+
+        VertexTerrain[] vertices;
+        private float GetHeight(VectorInt pos)
+        {
+            return vertices[pos.X + pos.Y*(NumFields.X+1)].height;
+        }
 
         /// <summary>
         /// Index of Index Buffer.
@@ -52,22 +61,26 @@ namespace Sample
         /// <param name="sizeY">The number of quads in y direction.</param>
         public Terrain(int numFieldsX, int numFieldsY, float fieldSizeX, float fieldSizeY)
         {
+            NumFields = new VectorInt(numFieldsX, numFieldsY);
+            FieldSize = new Vector2(fieldSizeX, fieldSizeY);
+
+
             numIndices = numFieldsX * numFieldsY * 2 * 3;
             System.Diagnostics.Debug.Assert((ulong)(numFieldsX * numFieldsY * 2 * 3) <= uint.MaxValue);
             // Saving vertices in array
-            VertexTerrain[] vertices = new VertexTerrain[(numFieldsX + 1) * (numFieldsY + 1)];
+            vertices = new VertexTerrain[(numFieldsX + 1) * (numFieldsY + 1)];
 
             for (int x = 0; x <= numFieldsX; ++x)
                 for (int y = 0; y <= numFieldsY; ++y)
                 {
-                    float xPos = x / numFieldsX * fieldSizeX - fieldSizeX / 2;
-                    float yPos = y / numFieldsY * fieldSizeY - fieldSizeY / 2;
+                    float xPos = (float)x / numFieldsX * fieldSizeX - fieldSizeX / 2;
+                    float yPos = (float)y / numFieldsY * fieldSizeY - fieldSizeY / 2;
                     // Assign position and texcoord basedon index. 
-                    vertices[y*numFieldsX + x] = new VertexTerrain{
+                    vertices[y*(numFieldsX+1) + x] = new VertexTerrain{
                         position = new OpenTK.Vector2(xPos, yPos),
                         texcoord = new OpenTK.Vector2((float)x/numFieldsX, (float)y/numFieldsY),
                         // Boring function to add some height.
-                        height = (float)(Math.Sin(xPos) - Math.Cos(yPos))
+                        height = (float)(Math.Sin(xPos/10) - Math.Cos(yPos/10))*10
                     };
                 }
 
@@ -129,7 +142,37 @@ namespace Sample
 
         public Vector3 GetGradient(Vector2 pos)
         {
+            Vector2 localCoord = pos + FieldSize / 2;
+            localCoord = new Vector2(localCoord.X / FieldSize.X, localCoord.Y / FieldSize.Y);
+            // Lower left, lower right, upper left, upper right positions.
+            VectorInt llPos = new VectorInt((int)localCoord.X, (int)localCoord.Y);
+            VectorInt lrPos = llPos + VectorInt.UnitX;
+            VectorInt ulPos = llPos + VectorInt.UnitY;
+            VectorInt urPos = lrPos + VectorInt.UnitY;
+
+            Vector2 posUV = localCoord - (Vector2)ulPos;
+
+            //Vector3 lPoint = new Vector3((Vector2)llPos + Vector2.UnitX*((1 - posUV.X) * GetHeight(llPos) + posUV.X * GetHeight(lrPos));
+
             return new Vector3(1, 0, 0);
+        }
+
+        public float GetHeight(Vector2 pos)
+        {
+            Vector2 localCoord = pos + FieldSize / 2;
+            localCoord = new Vector2(localCoord.X / FieldSize.X, localCoord.Y / FieldSize.Y);
+            // Lower left, lower right, upper left, upper right positions.
+            VectorInt llPos = new VectorInt((int)localCoord.X, (int)localCoord.Y);
+            VectorInt lrPos = llPos + VectorInt.UnitX;
+            VectorInt ulPos = llPos + VectorInt.UnitY;
+            VectorInt urPos = lrPos + VectorInt.UnitY;
+
+            Vector2 posUV = localCoord - (Vector2)ulPos;
+
+            float posValue = (1 - posUV.Y) * ((1 - posUV.X) * GetHeight(llPos) + posUV.X * GetHeight(lrPos)) +
+                             posUV.Y * ((1 - posUV.X) * GetHeight(ulPos) + posUV.X * GetHeight(urPos));
+
+            return posValue;
         }
     }
 }
