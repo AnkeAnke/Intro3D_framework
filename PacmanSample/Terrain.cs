@@ -138,8 +138,8 @@ namespace Sample
                         low = vertices[x + (y - 1) * (numFieldsX + 1)];
                     }
 
-                    Vector3 xGrad = new Vector3(1, right.height-left.height, 0)/fieldSizeX * numFieldsX;
-                    Vector3 yGrad = new Vector3(0, up.height - low.height, 1) / fieldSizeY * numFieldsY;
+                    Vector3 xGrad = new Vector3(1, (right.height - left.height)/ fieldSizeX * numFieldsX, 0);
+                    Vector3 yGrad = new Vector3(0, (up.height - low.height) / fieldSizeY * numFieldsY, 1);
 
                     Vector3 normal = Vector3.Cross(xGrad, yGrad);
                     normal.Normalize();
