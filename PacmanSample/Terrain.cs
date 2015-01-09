@@ -60,6 +60,10 @@ namespace Sample
             SetHeight(new VectorInt(X,Y), height);
         }
 
+        private Vector3 GetNormal(VectorInt pos)
+        {
+            return vertices[pos.X + pos.Y * (NumFields.X + 1)].normal;
+        }
         /// <summary>
         /// Index of Index Buffer.
         /// </summary>
@@ -228,7 +232,20 @@ namespace Sample
 
         public Vector3 GetNormal(Vector2 pos)
         {
-            return Vector3.Zero;
+            Vector2 localCoord = pos + FieldSize / 2;
+            localCoord = new Vector2(localCoord.X / FieldSize.X * NumFields.X, localCoord.Y / FieldSize.Y * NumFields.Y);
+            // Lower left, lower right, upper left, upper right positions.
+            VectorInt llPos = new VectorInt((int)localCoord.X, (int)localCoord.Y);
+            VectorInt lrPos = llPos + VectorInt.UnitX;
+            VectorInt ulPos = llPos + VectorInt.UnitY;
+            VectorInt urPos = lrPos + VectorInt.UnitY;
+
+            Vector2 posUV = localCoord - (Vector2)llPos;
+
+            Vector3 normal = (1 - posUV.Y) * ((1 - posUV.X) * GetNormal(llPos) + posUV.X * GetNormal(lrPos)) +
+                             posUV.Y * ((1 - posUV.X) * GetNormal(ulPos) + posUV.X * GetNormal(urPos));
+
+            return normal;
         }
 
 

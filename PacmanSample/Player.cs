@@ -57,16 +57,14 @@ namespace Sample
 
         public void Update(float timeSinceLastFrame, Map map, Terrain terrain, Matrix4 worldOrientation)
         {
-            // Project gradient back to 2D field, but keep original speed.
-            Vector3 terrainGradient = terrain.GetGradient(position);
-            float acceleration = -Vector3.Transform(terrainGradient, worldOrientation).Y;
-            Vector2 projectedGradient = new Vector2(terrainGradient.X, terrainGradient.Z);
-            if (projectedGradient.LengthSquared > 0.00001)
-                projectedGradient = Vector2.UnitX * 0.0001f;
-            projectedGradient.Normalize();
+            // Project normal back to 2D field, but keep original speed.
+            Vector3 terrainNormal = terrain.GetNormal(position);
+            Vector2 terrainDirection = -Vector3.Transform(terrainNormal, worldOrientation).Xz;
+            float acceleration = terrainDirection.Length;
+            terrainDirection.Normalize();
 
             // Move in terrain gradient direction.
-            Vector2 nextVelocity = velocity + projectedGradient * (timeSinceLastFrame * accelerationFactor * acceleration);
+            Vector2 nextVelocity = velocity + terrainDirection * (timeSinceLastFrame * accelerationFactor * acceleration) * 10;
             Vector2 nextPosition = position + nextVelocity;
 
             // Check if we would now touch a non walkable field
