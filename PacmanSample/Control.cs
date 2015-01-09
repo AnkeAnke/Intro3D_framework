@@ -16,16 +16,16 @@ namespace Sample
         public Quaternion WorldRotation { get { return worldRotation; } }
         private Quaternion worldRotation = Quaternion.Identity;
 
-        public void OnUpdateFrame(FrameEventArgs e)
+        public void OnUpdateFrame(float timeSinceLastFrame)
         {
             if(Keyboard.GetState().IsKeyDown(Key.Up))
-                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitX, (float)e.Time);
+                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitX, (float)timeSinceLastFrame);
             if(Keyboard.GetState().IsKeyDown(Key.Down))
-                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitX, -(float)e.Time);
+                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitX, -(float)timeSinceLastFrame);
             if(Keyboard.GetState().IsKeyDown(Key.Left))
-                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitZ, -(float)e.Time);
+                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitZ, -(float)timeSinceLastFrame);
             if(Keyboard.GetState().IsKeyDown(Key.Right))
-                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitZ, (float)e.Time);
+                worldRotation *= Quaternion.FromAxisAngle(Vector3.UnitZ, (float)timeSinceLastFrame);
         }
     }
 }
