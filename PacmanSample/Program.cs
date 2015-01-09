@@ -36,6 +36,7 @@ namespace Sample
         private Map map;
         private Player player;
         private Terrain terrain;
+        private Control control = new Control();
         private Shader terrainShader;
 
         public PacmanSample()
@@ -127,13 +128,17 @@ namespace Sample
 
             player.Update((float)e.Time, map);
 
+            // Update rotation.
+            control.OnUpdateFrame(e);
+            Matrix4 worldRotationMatrix = Matrix4.CreateFromQuaternion(control.WorldRotation);
+
             // Update per frame uniform data.
             perFrameUniformData.cameraPosition = new Vector3(0.0f, 100.0f, -100.0f);
             Matrix4 view = Matrix4.LookAt(perFrameUniformData.cameraPosition, Vector3.Zero, Vector3.UnitY);
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI * 0.35f, (float)Width / Height, 0.1f, 200.0f);
-            perFrameUniformData.viewProjection = view * projection;
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView((float)Math.PI * 0.35f, (float)Width / Height, 0.1f, 500.0f);
+            perFrameUniformData.viewProjection = worldRotationMatrix * view * projection; // Use world rotation to manipulate the global view projection matrix.
             perFrameUniformData.totalTime = totalTime;
-            perFrameUniformGPUBuffer.UpdateGPUData(ref perFrameUniformData);
+            perFrameUniformGPUBuffer.UpdateGPUData(ref perFrameUniformData);            
         }
 
         /// <summary>
