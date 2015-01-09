@@ -57,10 +57,10 @@ namespace Sample
         /// <returns>true if it is valid to walk to the specified rect.</returns>
         public bool TryWalk(Vector2 min, Vector2 max, out int gatheredCoins)
         {
-            int minX = (int)(min.X / blockSize + map.GetLength(0) / 2);
-            int minY = (int)(min.Y / blockSize + map.GetLength(1) / 2);
-            int maxX = (int)Math.Ceiling(max.X / blockSize + map.GetLength(0) / 2);
-            int maxY = (int)Math.Ceiling(max.Y / blockSize + map.GetLength(1) / 2);
+            int minX = Math.Max((int)(min.X / blockSize + map.GetLength(0) / 2), 0);
+            int minY = Math.Max((int)(min.Y / blockSize + map.GetLength(1) / 2), 0);
+            int maxX = Math.Min((int)Math.Ceiling(max.X / blockSize + map.GetLength(0) / 2), map.GetLength(0));
+            int maxY = Math.Min((int)Math.Ceiling(max.Y / blockSize + map.GetLength(1) / 2), map.GetLength(1));
 
             gatheredCoins = 0;
 
